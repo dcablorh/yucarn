@@ -1,0 +1,16 @@
+node_modules
+dist
+dist-ssr
+.output
+.tanstack
+.nitro
+*.local
+.env
+.env.*
+!.env.example
+*.log
+.git
+.gitignore
+Dockerfile
+.dockerignore
+README.md
