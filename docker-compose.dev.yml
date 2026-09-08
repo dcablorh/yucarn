@@ -1,0 +1,71 @@
+# Development override: bind-mounted source, hot reload, dev servers.
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+#
+# Each service switches to its Dockerfile's `deps` stage, which has the full
+# dependency tree (and therefore the Nest/Next/Vite CLIs) that the pruned
+# runtime stages deliberately lack.
+#
+# The anonymous volume on each /app/node_modules is what keeps the host's
+# node_modules from shadowing the container's. Without it, a host tree built
+# for a different platform gets mounted over the one npm installed inside.
+
+services:
+  server:
+    image: unipay-server:dev
+    build:
+      target: deps
+    # tini as PID 1, so the backgrounded compiler in docker-dev.sh gets reaped
+    # rather than accumulating as a zombie across restarts, and Ctrl-C reaches
+    # the watchers instead of being swallowed by the shell.
+    init: true
+    environment:
+      NODE_ENV: development
+    # See server/docker-dev.sh for why this is not `npm run start:dev`.
+    command: ./docker-dev.sh
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    healthcheck:
+      disable: true
+
+  business:
+    image: unipay-business:dev
+    build:
+      target: deps
+    init: true
+    environment:
+      NODE_ENV: development
+      # In dev these are read at runtime, so no rebuild is needed to change them.
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+      NEXT_PUBLIC_PRIVY_APP_ID: ${NEXT_PUBLIC_PRIVY_APP_ID:-}
+      INTERNAL_API_URL: ${INTERNAL_API_URL:-http://server:3001}
+    command: npm run dev
+    volumes:
+      - ./business:/app
+      - /app/node_modules
+      - /app/.next
+    healthcheck:
+      disable: true
+
+  client:
+    image: unipay-client:dev
+    build:
+      target: deps
+    init: true
+    environment:
+      VITE_REOWN_PROJECT_ID: ${VITE_REOWN_PROJECT_ID:-}
+      VITE_UNIPAY_TREASURY_ADDRESS: ${VITE_UNIPAY_TREASURY_ADDRESS:-}
+      VITE_UNIPAY_TESTNET_TREASURY_ADDRESS: ${VITE_UNIPAY_TESTNET_TREASURY_ADDRESS:-}
+    # --host binds 0.0.0.0; Vite defaults to localhost, unreachable from the host.
+    # `open` in vite.config.ts is a no-op here since there is no browser.
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+    # !override replaces the base file's 8080:80 mapping instead of appending to
+    # it; in dev nothing is listening on port 80.
+    ports: !override
+      - "${CLIENT_DEV_PORT:-5173}:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    healthcheck:
+      disable: true

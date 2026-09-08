@@ -1,0 +1,124 @@
+# Production-shaped stack: every service builds a lean runtime image.
+#
+#   cp .env.example .env && $EDITOR .env
+#   docker compose up -d --build
+#
+# For local development with hot reload, add the override:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+#
+# On Coolify, point the application at this file. Coolify's own proxy handles
+# routing and TLS, so there is deliberately no reverse proxy here.
+
+name: unipay
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-unipay}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      # -U/-d matter: bare pg_isready reports ready during the init pass, before
+      # the database the server needs actually exists.
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-unipay}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  server:
+    # Tagged explicitly so the dev override, which builds a different
+    # stage, cannot overwrite this image and leave `docker compose up`
+    # silently running dev servers.
+    image: unipay-server:latest
+    build:
+      context: ./server
+      target: runner
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        # The entrypoint runs `prisma migrate deploy` before booting Nest, so
+        # this has to be `service_healthy`, not merely `service_started`.
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@postgres:5432/unipay?schema=public}
+      ENCRYPTION_MASTER_KEY: ${ENCRYPTION_MASTER_KEY:?set ENCRYPTION_MASTER_KEY in .env - openssl rand -base64 32}
+      PRIVY_APP_ID: ${PRIVY_APP_ID:?set PRIVY_APP_ID in .env}
+      PRIVY_APP_SECRET: ${PRIVY_APP_SECRET:?set PRIVY_APP_SECRET in .env}
+      MERCHANT_TREASURY_ADDRESS: ${MERCHANT_TREASURY_ADDRESS:?set MERCHANT_TREASURY_ADDRESS in .env}
+      SEPOLIA_RPC_URL: ${SEPOLIA_RPC_URL:-https://ethereum-sepolia-rpc.publicnode.com}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:8080}
+    ports:
+      - "${SERVER_PORT:-3001}:3001"
+    healthcheck:
+      # GET / is the existing hello route (server/src/app.controller.ts).
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3001/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  business:
+    # Tagged explicitly so the dev override, which builds a different
+    # stage, cannot overwrite this image and leave `docker compose up`
+    # silently running dev servers.
+    image: unipay-business:latest
+    build:
+      context: ./business
+      target: runner
+      args:
+        # Build-time, not runtime: Next inlines these into the client bundle.
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3001}
+        NEXT_PUBLIC_PRIVY_APP_ID: ${NEXT_PUBLIC_PRIVY_APP_ID:-}
+    restart: unless-stopped
+    depends_on:
+      server:
+        condition: service_started
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+      # Runtime, and server-side only. The public URL above is written from the
+      # browser's point of view and does not resolve inside this container.
+      INTERNAL_API_URL: ${INTERNAL_API_URL:-http://server:3001}
+    ports:
+      - "${BUSINESS_PORT:-3000}:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  client:
+    # Tagged explicitly so the dev override, which builds a different
+    # stage, cannot overwrite this image and leave `docker compose up`
+    # silently running dev servers.
+    image: unipay-client:latest
+    build:
+      context: ./client
+      target: runner
+      args:
+        VITE_REOWN_PROJECT_ID: ${VITE_REOWN_PROJECT_ID:-}
+        VITE_UNIPAY_TREASURY_ADDRESS: ${VITE_UNIPAY_TREASURY_ADDRESS:-}
+        VITE_UNIPAY_TESTNET_TREASURY_ADDRESS: ${VITE_UNIPAY_TESTNET_TREASURY_ADDRESS:-}
+    restart: unless-stopped
+    ports:
+      - "${CLIENT_PORT:-8080}:80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  postgres-data:
