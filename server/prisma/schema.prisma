@@ -1,0 +1,188 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Business {
+  id              String           @id @default(cuid())
+  privyUserId     String           @unique
+  walletAddress   String
+  name            String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  invoices        Invoice[]
+  ensRegistration EnsRegistration?
+  employees       Employee[]
+  payrollBatches  PayrollBatch[]
+
+  @@index([walletAddress])
+}
+
+enum InvoiceStatus {
+  PENDING
+  PROCESSING
+  PAID
+  EXPIRED
+  UNDERPAID
+  FAILED
+}
+
+model Invoice {
+  id           String        @id
+  businessId   String
+  business     Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  amountBase   BigInt
+  nonce        Int
+  activeNonce  Int?
+  payableBase  BigInt
+  destChain    String        @default("arc-testnet")
+  asset        String        @default("USDC")
+  recipient    String
+  description  String?
+  status       InvoiceStatus @default(PENDING)
+  sourceTxHash String?
+  destTxHash   String?
+  paidAt       DateTime?
+  expiresAt    DateTime
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@unique([businessId, activeNonce])
+  @@index([businessId, status])
+  @@index([status, destChain])
+}
+
+model WatcherCursor {
+  chain     String   @id
+  lastBlock BigInt
+  updatedAt DateTime @updatedAt
+}
+
+enum EnsStatus {
+  DRAFT
+  REGISTRY_DEPLOYED
+  COMMITTED
+  REGISTERED
+  FAILED
+}
+
+model EnsRegistration {
+  id             String    @id @default(cuid())
+  businessId     String    @unique
+  business       Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  label          String
+  name           String
+  status         EnsStatus @default(DRAFT)
+  ownerAddress   String
+  subregistry    String?
+  resolver       String?
+  priceBase      BigInt
+  /// Envelope-encrypted commit secret (see EncryptionService). Never
+  /// returned by an API response and never logged.
+  secretEnvelope String
+  deployTxHash   String?
+  commitTxHash   String?
+  /// Seconds since epoch, taken from the Sepolia BLOCK the commit landed
+  /// in. Never a client or server clock — the registrar compares against
+  /// block.timestamp, so anything else can disagree with the chain.
+  committedAt    Int?
+  registerTxHash String?
+  recordsTxHash  String?
+  durationSecs   Int
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Employee {
+  id            String   @id @default(cuid())
+  businessId    String
+  business      Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name          String
+  /// Stored lowercase. Payroll matches this against on-chain events, and an
+  /// EVM address has two valid spellings — see normaliseAddress.
+  walletAddress String
+  /// Written by a later plan. Nothing in the Team plan sets these.
+  subnameLabel  String?
+  subname       String?
+  subnameTxHash String?
+  prefChain     String   @default("arc-testnet")
+  prefAsset     String   @default("USDC")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([businessId, subnameLabel])
+  @@index([businessId])
+}
+
+enum PayrollBatchStatus {
+  DRAFT
+  EXECUTING
+  COMPLETED
+  PARTIAL
+  FAILED
+}
+
+enum PayrollItemStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+model PayrollBatch {
+  id           String             @id @default(cuid())
+  businessId   String
+  business     Business           @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  status       PayrollBatchStatus @default(DRAFT)
+  /// Where the money comes FROM. Arc, always, in this plan.
+  fundingChain String             @default("arc-testnet")
+  totalBase    BigInt
+  executedAt   DateTime?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  items        PayrollItem[]
+
+  @@index([businessId, status])
+}
+
+model PayrollItem {
+  id            String            @id @default(cuid())
+  batchId       String
+  batch         PayrollBatch      @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  /// Deliberately a loose reference, not a relation: removing someone from
+  /// the team must not erase the record that they were paid.
+  employeeId    String
+  name          String
+  walletAddress String
+  amountBase    BigInt
+  /// Written per item from the employee's preferred chain, so adding
+  /// cross-chain later is a route branch rather than a reshaped model.
+  destChain     String
+  destAsset     String
+  status        PayrollItemStatus @default(PENDING)
+  payTxHash     String?
+  failureReason String?
+
+  @@index([batchId])
+  /// Indexed, not unique. A reported hash is checked against every other
+  /// batch's items before it is written (see PayrollService), and this is
+  /// what makes that check an index lookup rather than a table scan.
+  ///
+  /// NOT @unique deliberately: an atomic EIP-5792 batch is ONE transaction
+  /// that pays everyone in the run, so one hash legitimately belongs to
+  /// every item in that batch. A unique index would make the second item
+  /// of every batched run fail to record — a payment that happened,
+  /// written down as one that did not, which is the exact failure this
+  /// change exists to remove.
+  @@index([payTxHash])
+}
+
+// Note on the spec's fields: §5.1 lists burnTxHash, messageHash, attestation
+// and mintTxHash on PayrollItem, and SIGNING/PREPARED on the batch enum.
+// Those belong to the CCTP path this plan does not build. Creating columns
+// nothing writes invites someone to assume they mean something. The
+// cross-chain plan adds them in its own migration, alongside the code that
+// fills them.
