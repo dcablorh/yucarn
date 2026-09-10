@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Colors */
+  --color-carbon: #000000;
+  --color-paper-white: #ffffff;
+  --color-sky-wash: #dceeff;
+  --color-concrete-gray: #cccccc;
+  --color-soft-mist: #e9e9e9;
+  --color-electric-blue: #4da2ff;
+  --color-mint-pop: #55db9c;
+  --color-lavender: #e9ccff;
+  --color-ember: #fb4903;
+  --color-sunburst: #ffd731;
+  --color-voltage-violet: #5c4ade;
+
+  /* Typography */
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+
+  /* Border Radius */
+  --radius-cards: 24px;
+  --radius-cards-lg: 32px;
+  --radius-pills: 1600px;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    letter-spacing: -0.01em;
+    background-color: var(--color-sky-wash);
+    color: var(--color-carbon);
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+/* Tactile Sticker Button Utilities */
+.btn-slush-primary {
+  background-color: var(--color-carbon);
+  color: var(--color-paper-white);
+  border: 1px solid var(--color-carbon);
+  border-radius: var(--radius-pills);
+  font-weight: 700;
+  transition: transform 0.12s ease, opacity 0.12s ease;
+}
+.btn-slush-primary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+.btn-slush-primary:active {
+  transform: translateY(0);
+}
+
+.btn-slush-secondary {
+  background-color: var(--color-paper-white);
+  color: var(--color-carbon);
+  border: 1px solid var(--color-carbon);
+  border-radius: var(--radius-pills);
+  font-weight: 700;
+  transition: transform 0.12s ease, background-color 0.12s ease;
+}
+.btn-slush-secondary:hover {
+  background-color: var(--color-soft-mist);
+  transform: translateY(-1px);
+}
+.btn-slush-secondary:active {
+  transform: translateY(0);
+}
+
+/* Sticker Cards */
+.slush-card {
+  background-color: var(--color-paper-white);
+  border: 1px solid var(--color-carbon);
+  border-radius: var(--radius-cards-lg);
+}
+
+.slush-inner-card {
+  background-color: var(--color-paper-white);
+  border: 1px solid var(--color-carbon);
+  border-radius: var(--radius-cards);
+}
+
+.slush-badge {
+  border: 1px solid var(--color-carbon);
+  border-radius: var(--radius-pills);
+  font-weight: 700;
+  letter-spacing: 0.032em;
+  text-transform: uppercase;
+}
+
+/* Hide number input spinners / steppers */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
