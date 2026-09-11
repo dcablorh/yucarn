@@ -1,0 +1,439 @@
+@import "tailwindcss";
+
+@theme {
+  /*
+   * Named by ROLE, never by value. That is what makes a dark theme a
+   * change to this block rather than a rewrite of twelve routes.
+   */
+
+  /* Surfaces. #FAFAF9 is the page; #FFFFFF is only ever a surface on
+     top of it. Never invert these two. */
+  --color-canvas: #FAFAF9;
+  --color-surface: #FFFFFF;
+  /* Inputs at rest, <code>, table heads, inset wells. Inset elements
+     used to borrow the canvas colour, which made them invisible on a
+     card. */
+  --color-surface-sunken: #F5F5F4;
+  --color-surface-inverse: #1C1917;
+
+  /* Lines carry the structure here. Elevation is the exception, not the
+     rule — see --shadow-float. */
+  --color-line: #E7E5E4;
+  --color-line-strong: #D6D3D1;
+
+  /* Four text levels. ink-soft is the one that was missing: `muted` was
+     doing secondary copy, table cells AND micro-labels at once, which
+     is why the dashboard read flat. */
+  --color-ink: #1C1917;
+  --color-ink-soft: #57534E;
+  --color-muted: #78716C;
+  /* 2.52:1 against white — fails WCAG AA (4.5:1) at every size this app
+     sets in text, so this is NOT a text colour: every uppercase
+     micro-label that used to sit here (Field's label, table heads,
+     CopyRow, Stat) now uses `muted` (4.80:1) instead. `faint` still
+     exists for the places contrast doesn't gate: input placeholders,
+     disabled controls, and other decorative marks nobody is asked to
+     read. Do not put real copy back on this token. */
+  --color-faint: #A8A29E;
+
+  /*
+   * The one chromatic fill. Primary action only — and also a
+   * foreground: every primary Button label sits in white-on-accent, and
+   * every linkClass link sits in accent-on-surface, some as small as
+   * 10px. That means it must stay at or above 4.5:1 (WCAG AA) on
+   * `surface`, `canvas` and `accent-wash`, not just look right at a
+   * glance.
+   *
+   * #0D9488 (the previous value) failed that everywhere: white on it
+   * measured 3.74:1, and so did it on `surface` — both below 4.5:1. The
+   * old `accent-hover`, #0F766E, passed at 5.47:1/5.47:1/5.24:1/5.25:1
+   * on white/surface/canvas/accent-wash, so it was promoted to be the
+   * base accent, one step deeper in the same hue. Its own hover step,
+   * #115E59, measures 7.58:1 on white — comfortably darker and still
+   * well clear of AA.
+   */
+  --color-accent: #0F766E;
+  --color-accent-hover: #115E59;
+  --color-accent-wash: #F0FDFA;
+
+  /*
+   * Text and accent on `surface-inverse`. The dark ground existed here
+   * for a long time with nothing to put on it, so the landing page's
+   * dark band reached for raw palette classes instead — the gap, not
+   * carelessness.
+   *
+   * The light palette cannot simply be reused on dark. Measured against
+   * #1C1917: `muted` is 3.65:1 and `accent` is 3.20:1, both under AA for
+   * body copy, and `accent-hover` is 2.31:1 — a hover state *less*
+   * visible than its own rest state. So the accent inverts to a lighter
+   * step of the same hue rather than a darker one, and it is what
+   * carries links and focus rings on a dark section: a focus ring at
+   * 3.20:1 on near-black is not a focus ring.
+   *
+   * ink-inverse 16.03:1 · muted-inverse 8.33:1 · accent-inverse 9.39:1.
+   * line-inverse is a hairline divider, decorative, so contrast does not
+   * gate it.
+   */
+  --color-ink-inverse: #F5F5F4;
+  --color-muted-inverse: #B8B2AC;
+  --color-accent-inverse: #2DD4BF;
+  --color-line-inverse: #44403C;
+
+  /*
+   * The landing stage. One route in this app is dark end to end, and a
+   * marketing page needs depth the ledger never does: a ground the hero's
+   * shader can sit *behind*, and panels that read as glass rather than as
+   * paper.
+   *
+   * canvas-inverse is one step below surface-inverse, the same
+   * relationship canvas has to surface on the light side, so a panel on
+   * the dark ground separates for the same reason a Card does on paper.
+   * Darkening the ground only raises contrast for the inverse text roles
+   * measured above, so ink-inverse, muted-inverse and accent-inverse all
+   * clear AA here by more than they do on surface-inverse.
+   *
+   * The glass roles are alpha on purpose. A flat hex cannot sit over a
+   * moving shader without either hiding it or being washed out by it;
+   * these let the aurora through at a fixed fraction whatever colour it
+   * happens to be under a given panel at a given moment.
+   */
+  --color-canvas-inverse: #0C0A09;
+  --color-glass: rgba(245, 245, 244, 0.04);
+  --color-glass-strong: rgba(245, 245, 244, 0.07);
+  --color-glass-line: rgba(245, 245, 244, 0.10);
+  --color-glass-line-strong: rgba(245, 245, 244, 0.18);
+
+  /*
+   * Elevation by light rather than by shadow, which is the one thing a
+   * dark ground can do that paper cannot. Reserved for the primary
+   * action and the element a section is built around — the same
+   * one-per-view discipline shadow-float has.
+   */
+  --shadow-glow: 0 0 0 1px rgba(45, 212, 191, 0.28), 0 10px 44px -10px rgba(45, 212, 191, 0.42);
+  --shadow-glow-soft: 0 18px 60px -22px rgba(45, 212, 191, 0.30);
+
+  /*
+   * Status tones. Hue assignments carry over from the shell spec, at
+   * Tailwind's 50/700/200 steps, so the six invoice states look
+   * unchanged — but they are now nameable from outside lib/status.ts,
+   * which is why the activity list and payroll views no longer each
+   * re-guess "paid green".
+   */
+  --color-positive-wash: #ECFDF5;
+  --color-positive-ink: #047857;
+  --color-positive-line: #A7F3D0;
+
+  --color-pending-wash: #FFFBEB;
+  --color-pending-ink: #B45309;
+  --color-pending-line: #FDE68A;
+
+  --color-progress-wash: #EFF6FF;
+  --color-progress-ink: #1D4ED8;
+  --color-progress-line: #BFDBFE;
+
+  --color-caution-wash: #FFF7ED;
+  --color-caution-ink: #C2410C;
+  --color-caution-line: #FED7AA;
+
+  --color-negative-wash: #FEF2F2;
+  --color-negative-ink: #B91C1C;
+  --color-negative-line: #FECACA;
+
+  --color-neutral-wash: #F5F5F4;
+  --color-neutral-ink: #57534E;
+  --color-neutral-line: #E7E5E4;
+
+  /*
+   * The type scale. The app used to jump 11px -> 13px -> text-xl with
+   * nothing between, so every intermediate size was improvised.
+   * Negative tracking at size is the cheapest thing that makes type
+   * look designed rather than defaulted.
+   */
+  --text-caption: 0.625rem;
+  --text-caption--line-height: 1.4;
+  --text-caption--letter-spacing: 0.02em;
+
+  --text-label: 0.6875rem;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.04em;
+  --text-label--font-weight: 500;
+
+  --text-body: 0.8125rem;
+  --text-body--line-height: 1.5;
+
+  --text-lead: 0.9375rem;
+  --text-lead--line-height: 1.6;
+
+  --text-subhead: 1.0625rem;
+  --text-subhead--line-height: 1.4;
+  --text-subhead--letter-spacing: -0.01em;
+  --text-subhead--font-weight: 500;
+
+  --text-section: 1.25rem;
+  --text-section--line-height: 1.3;
+  --text-section--letter-spacing: -0.015em;
+  --text-section--font-weight: 600;
+
+  --text-title: 1.625rem;
+  --text-title--line-height: 1.2;
+  --text-title--letter-spacing: -0.02em;
+  --text-title--font-weight: 600;
+
+  --text-display: clamp(1.9rem, 4.4vw, 2.6rem);
+  --text-display--line-height: 1.05;
+  --text-display--letter-spacing: -0.025em;
+  --text-display--font-weight: 500;
+
+  /*
+   * One step above display, and the only place in the app that uses it:
+   * the landing hero, which has to carry a screen on its own. It exists
+   * as a token because the hero previously set its own inline
+   * clamp(2.1rem, 5vw, 3.25rem) — a size the scale did not know about
+   * and could not keep in tune with `display`.
+   */
+  --text-hero: clamp(2.5rem, 6vw, 4rem);
+  --text-hero--line-height: 1.03;
+  --text-hero--letter-spacing: -0.03em;
+  --text-hero--font-weight: 600;
+
+  /* Exactly three. */
+  --radius-control: 6px;
+  --radius-card: 10px;
+  --radius-pill: 9999px;
+
+  /* Borders do the work by default. shadow-float is the landing page's
+     figure shadow, promoted — at most one element per view, which is
+     what keeps it meaningful. */
+  --shadow-raised: 0 4px 16px rgba(0, 0, 0, 0.05);
+  --shadow-float: 0 1px 2px rgba(28, 25, 23, 0.04), 0 12px 32px -16px rgba(28, 25, 23, 0.18);
+
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+/*
+ * Literal values, not var(--text-body). Tailwind v4 prunes theme
+ * variables that no utility references (the reason @theme static exists),
+ * so a var() here can silently resolve to nothing and drop the body back to
+ * the browser's 16px. The background and text color are applied by utility
+ * classes on <body> in app/layout.tsx. The font-family comes from
+ * Tailwind's preflight, which applies --font-sans to html; declaring
+ * --font-sans in this @theme block overrides it to IBM Plex.
+ */
+body {
+  /* 13px base. The dashboard is a ledger; density is the point. */
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+/*
+ * Amounts and addresses render in the mono face, and in a table they must
+ * line up column-wise. Tabular figures are what make that true; without
+ * this, every mono number in the app is proportionally spaced.
+ */
+.font-mono {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * ---------------------------------------------------------------------
+ * The landing stage's motion layer.
+ *
+ * These live in CSS rather than in the components that use them for one
+ * reason: every one of them has to be switchable by a media query, and
+ * `prefers-reduced-motion` is not a thing a React component can read
+ * without mounting, measuring and re-rendering. Declaring the animation
+ * here means the reduced-motion visitor never starts it at all, rather
+ * than starting it and having JavaScript stop it a frame later.
+ *
+ * The rule throughout: the static state is the DEFAULT, and motion is
+ * added by the no-preference query. Anything written the other way round
+ * leaves a visitor who asked for stillness looking at a blank element.
+ * ---------------------------------------------------------------------
+ */
+
+/* The chain marquee. Duplicated track, translated by exactly half its
+   own width, which is what makes the loop seamless without measuring
+   anything in JavaScript. */
+@keyframes marquee-track {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .marquee-track {
+    animation: marquee-track var(--marquee-duration, 42s) linear infinite;
+  }
+  /* Pausing on hover is not decoration: the row carries readable chain
+     names, and a name that will not hold still cannot be read. */
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+/* A highlight travelling across text. The gradient is three stops wide
+   and four times the box, so the bright band spends most of the cycle
+   off-screen and the text reads as itself with an occasional sweep,
+   rather than as a permanently striped thing. */
+@keyframes text-sheen {
+  to { background-position: -200% center; }
+}
+
+.text-sheen {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-muted-inverse) 40%,
+    var(--color-ink-inverse) 50%,
+    var(--color-muted-inverse) 60%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .text-sheen {
+    animation: text-sheen 7s linear infinite;
+  }
+}
+
+/*
+ * Type that carries the accent as a gradient rather than a fill. Used on
+ * the one phrase per screen that the eye should land on first — never on
+ * a whole heading, because a gradient across a full sentence is the
+ * fastest way to make a page look generated.
+ */
+.text-gradient {
+  background-image: linear-gradient(
+    92deg,
+    var(--color-ink-inverse) 0%,
+    var(--color-accent-inverse) 58%,
+    var(--color-ink-inverse) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/*
+ * The rotating conic border. A pseudo-element spun behind the panel and
+ * clipped to a one-pixel inset, so the border itself appears to travel.
+ * Kept to the CTA and the hero figure — at most two per page.
+ */
+@keyframes border-spin {
+  to { transform: rotate(1turn); }
+}
+
+.star-border {
+  position: relative;
+  isolation: isolate;
+}
+
+.star-border::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(
+    from var(--border-angle, 0deg),
+    transparent 0deg,
+    var(--color-accent-inverse) 70deg,
+    transparent 150deg,
+    transparent 360deg
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 260ms ease;
+}
+
+.star-border:hover::before,
+.star-border:focus-within::before {
+  opacity: 1;
+}
+
+/* An angle is not an interpolable property until it is registered as
+   one; without this the conic gradient jumps rather than sweeps. */
+@property --border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .star-border::before {
+    animation: border-spin 4s linear infinite;
+  }
+}
+
+/*
+ * The spotlight that follows a pointer across a panel. The component
+ * writes --spot-x / --spot-y and nothing else; the gradient, the fade
+ * and the reduced-motion behaviour are all decided here.
+ *
+ * Two layers, because they do different jobs: `-glow` washes the panel
+ * interior, `-edge` lights only the border. A panel with just the wash
+ * looks smudged; a panel with just the edge looks inert.
+ */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+
+.spotlight-glow,
+.spotlight-edge {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 320ms ease;
+  pointer-events: none;
+}
+
+.spotlight-glow {
+  z-index: -1;
+  background: radial-gradient(
+    260px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    rgba(45, 212, 191, 0.14),
+    transparent 68%
+  );
+}
+
+.spotlight-edge {
+  padding: 1px;
+  background: radial-gradient(
+    200px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    var(--color-accent-inverse),
+    transparent 70%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.spotlight[data-lit="true"] .spotlight-glow { opacity: 1; }
+.spotlight[data-lit="true"] .spotlight-edge { opacity: 0.65; }
+
+/*
+ * The still aurora. This is what the hero shows when WebGL is missing,
+ * when the canvas has not mounted yet, and when the visitor has asked
+ * for reduced motion — three different reasons that all want the same
+ * picture, which is why it is one class rather than three fallbacks.
+ */
+.aurora-still {
+  background:
+    radial-gradient(58% 42% at 22% 8%, rgba(45, 212, 191, 0.20), transparent 62%),
+    radial-gradient(46% 38% at 78% 0%, rgba(15, 118, 110, 0.26), transparent 66%),
+    radial-gradient(70% 50% at 50% 0%, rgba(28, 25, 23, 0), transparent 70%);
+}
