@@ -69,3 +69,20 @@ services:
       - /app/node_modules
     healthcheck:
       disable: true
+
+  landingpage:
+    image: unipay-landingpage:dev
+    build:
+      target: deps
+    init: true
+    environment:
+      NODE_ENV: development
+      # The dev server reads these at startup, so a restart picks up changes.
+      VITE_CLIENT_URL: ${VITE_CLIENT_URL:-http://localhost:5173}
+      VITE_BUSINESS_URL: ${VITE_BUSINESS_URL:-http://localhost:3000}
+    command: bun run dev --host 0.0.0.0 --port 3000
+    volumes:
+      - ./landingpage:/app
+      - /app/node_modules
+    healthcheck:
+      disable: true
