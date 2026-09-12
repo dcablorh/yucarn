@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 650" width="100%" height="100%" style="background-color: #0f172a; font-family: system-ui, -apple-system, sans-serif;">
+  <defs>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <text x="500" y="40" text-anchor="middle" fill="#f8fafc" font-size="22" font-weight="bold">Smart Contract &amp; Onchain Protocol Interactions</text>
+
+  <!-- ACTORS & CALLERS -->
+  <rect x="40" y="90" width="220" height="520" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+  <text x="150" y="125" text-anchor="middle" fill="#38bdf8" font-size="16" font-weight="bold">Application Callers</text>
+  
+  <rect x="60" y="150" width="180" height="120" rx="8" fill="#0f172a" stroke="#60a5fa" stroke-width="1"/>
+  <text x="150" y="180" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">Buyer Payment App</text>
+  <text x="150" y="200" text-anchor="middle" fill="#94a3b8" font-size="11">Viem / Wagmi Wallet</text>
+  <text x="150" y="225" text-anchor="middle" fill="#38bdf8" font-size="10">depositForBurn()</text>
+  <text x="150" y="245" text-anchor="middle" fill="#38bdf8" font-size="10">receiveMessage()</text>
+
+  <rect x="60" y="300" width="180" height="130" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
+  <text x="150" y="330" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">NestJS EnsService</text>
+  <text x="150" y="350" text-anchor="middle" fill="#94a3b8" font-size="11">Server Account / Relayer</text>
+  <text x="150" y="375" text-anchor="middle" fill="#34d399" font-size="10">deployProxy()</text>
+  <text x="150" y="395" text-anchor="middle" fill="#34d399" font-size="10">makeCommitment() / register()</text>
+
+  <rect x="60" y="455" width="180" height="130" rx="8" fill="#0f172a" stroke="#a855f7" stroke-width="1"/>
+  <text x="150" y="485" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">ArcWatcher Daemon</text>
+  <text x="150" y="505" text-anchor="middle" fill="#94a3b8" font-size="11">ArcRpcClient</text>
+  <text x="150" y="530" text-anchor="middle" fill="#c084fc" font-size="10">eth_getLogs (Transfer)</text>
+  <text x="150" y="550" text-anchor="middle" fill="#c084fc" font-size="10">decodeEventLog()</text>
+
+  <!-- TARGET CONTRACTS LAYER -->
+  
+  <!-- CCTP PROTOCOL -->
+  <g transform="translate(320, 90)">
+    <rect x="0" y="0" width="310" height="240" rx="10" fill="#0f172a" stroke="#3b82f6" stroke-width="2"/>
+    <text x="155" y="30" text-anchor="middle" fill="#60a5fa" font-size="14" font-weight="bold">Circle CCTPv2 Protocol Contracts</text>
+    
+    <rect x="20" y="50" width="270" height="70" rx="6" fill="#1e293b" stroke="#3b82f6" stroke-width="1"/>
+    <text x="155" y="75" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">TokenMessengerV2</text>
+    <text x="155" y="95" text-anchor="middle" fill="#94a3b8" font-size="10">depositForBurn(amount, dstDomain, mintRecipient, token)</text>
+
+    <rect x="20" y="140" width="270" height="70" rx="6" fill="#1e293b" stroke="#3b82f6" stroke-width="1"/>
+    <text x="155" y="165" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">MessageTransmitter</text>
+    <text x="155" y="185" text-anchor="middle" fill="#94a3b8" font-size="10">receiveMessage(messageBytes, attestationSignature)</text>
+  </g>
+
+  <!-- ARC USCD CONTRACT -->
+  <g transform="translate(320, 350)">
+    <rect x="0" y="0" width="310" height="260" rx="10" fill="#0f172a" stroke="#a855f7" stroke-width="2"/>
+    <text x="155" y="30" text-anchor="middle" fill="#c084fc" font-size="14" font-weight="bold">Arc Testnet Contracts (ChainID: 5042002)</text>
+
+    <rect x="20" y="50" width="270" height="90" rx="6" fill="#1e293b" stroke="#a855f7" stroke-width="1"/>
+    <text x="155" y="75" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">Arc Native USDC (ERC-20)</text>
+    <text x="155" y="95" text-anchor="middle" fill="#94a3b8" font-size="10">Address: 0x3600000000000000000000000000000000000000</text>
+    <text x="155" y="115" text-anchor="middle" fill="#e9d5ff" font-size="10">Emits: event Transfer(from, to, value)</text>
+
+    <rect x="20" y="155" width="270" height="80" rx="6" fill="#1e293b" stroke="#a855f7" stroke-width="1"/>
+    <text x="155" y="180" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">Arc Batch Payroll Engine</text>
+    <text x="155" y="200" text-anchor="middle" fill="#94a3b8" font-size="10">Multi-recipient USDC transfers with low gas fees</text>
+  </g>
+
+  <!-- ENSV2 CONTRACTS -->
+  <g transform="translate(660, 90)">
+    <rect x="0" y="0" width="300" height="520" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+    <text x="150" y="30" text-anchor="middle" fill="#34d399" font-size="14" font-weight="bold">ENSv2 Sepolia Smart Contracts</text>
+
+    <rect x="20" y="50" width="260" height="90" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+    <text x="150" y="75" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">verifiableFactory</text>
+    <text x="150" y="95" text-anchor="middle" fill="#94a3b8" font-size="10">deployProxy(implementation, salt, data)</text>
+    <text x="150" y="115" text-anchor="middle" fill="#6ee7b7" font-size="10">Deploys Custom Merchant Subregistry</text>
+
+    <rect x="20" y="155" width="260" height="140" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+    <text x="150" y="180" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">ethRegistrar Controller</text>
+    <text x="150" y="200" text-anchor="middle" fill="#94a3b8" font-size="10">makeCommitment(name, owner, secret)</text>
+    <text x="150" y="220" text-anchor="middle" fill="#34d399" font-size="10">commit(commitmentHash)</text>
+    <text x="150" y="240" text-anchor="middle" fill="#94a3b8" font-size="10">[60s State Machine Timer]</text>
+    <text x="150" y="260" text-anchor="middle" fill="#34d399" font-size="10">register(name, owner, duration, secret)</text>
+
+    <rect x="20" y="310" width="260" height="180" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+    <text x="150" y="335" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">publicResolver</text>
+    <text x="150" y="355" text-anchor="middle" fill="#94a3b8" font-size="10">multicall(bytes[] data)</text>
+    <text x="150" y="380" text-anchor="middle" fill="#6ee7b7" font-size="10">setText(node, "unipay.address", addr)</text>
+    <text x="150" y="400" text-anchor="middle" fill="#6ee7b7" font-size="10">setText(node, "unipay.chain", chainId)</text>
+    <text x="150" y="420" text-anchor="middle" fill="#6ee7b7" font-size="10">setText(node, "unipay.asset", "USDC")</text>
+    <text x="150" y="440" text-anchor="middle" fill="#6ee7b7" font-size="10">setAddr(node, 60, ethAddress)</text>
+  </g>
+
+  <!-- ARROWS -->
+  <line x1="240" y1="180" x2="320" y2="180" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="240" y1="360" x2="660" y2="200" stroke="#34d399" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="240" y1="520" x2="320" y2="440" stroke="#c084fc" stroke-width="2" marker-end="url(#arrow)"/>
+</svg>

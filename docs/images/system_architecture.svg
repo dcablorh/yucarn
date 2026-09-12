@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="100%" height="100%" style="background-color: #0f172a; font-family: system-ui, -apple-system, sans-serif;">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#581c87"/>
+      <stop offset="100%" stop-color="#a855f7"/>
+    </linearGradient>
+    <linearGradient id="orangeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7c2d12"/>
+      <stop offset="100%" stop-color="#f97316"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="500" y="40" text-anchor="middle" fill="#f8fafc" font-size="22" font-weight="bold">Yucarn (UniPay) — System Architecture</text>
+
+  <!-- FRONTEND LAYER (BLUE) -->
+  <rect x="40" y="80" width="420" height="260" rx="12" fill="url(#blueGrad)" filter="url(#shadow)" opacity="0.9"/>
+  <text x="60" y="110" fill="#60a5fa" font-size="14" font-weight="bold" letter-spacing="1">FRONTEND LAYER (CLIENTS)</text>
+  
+  <rect x="60" y="130" width="170" height="90" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/>
+  <text x="145" y="155" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">Client Checkout Portal</text>
+  <text x="145" y="175" text-anchor="middle" fill="#94a3b8" font-size="11">app.yucarn.walbucket.com</text>
+  <text x="145" y="195" text-anchor="middle" fill="#38bdf8" font-size="10">1-Click CCTP Payment</text>
+
+  <rect x="260" y="130" width="180" height="90" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/>
+  <text x="350" y="155" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">Merchant Dashboard</text>
+  <text x="350" y="175" text-anchor="middle" fill="#94a3b8" font-size="11">business.yucarn.walbucket.com</text>
+  <text x="350" y="195" text-anchor="middle" fill="#38bdf8" font-size="10">@privy-io/react-auth</text>
+
+  <rect x="60" y="235" width="380" height="80" rx="8" fill="#0f172a" stroke="#60a5fa" stroke-width="1" stroke-dasharray="4"/>
+  <text x="250" y="260" text-anchor="middle" fill="#93c5fd" font-size="12" font-weight="bold">Shared Client State &amp; Services</text>
+  <text x="250" y="280" text-anchor="middle" fill="#cbd5e1" font-size="11">Reown AppKit | Viem / Wagmi | Sub-Cent Nonce Calculator ($100.0042)</text>
+
+  <!-- EXTERNAL SERVICES LAYER (ORANGE) -->
+  <rect x="540" y="80" width="420" height="260" rx="12" fill="url(#orangeGrad)" filter="url(#shadow)" opacity="0.9"/>
+  <text x="560" y="110" fill="#fdba74" font-size="14" font-weight="bold" letter-spacing="1">EXTERNAL SERVICES LAYER</text>
+
+  <rect x="560" y="130" width="180" height="90" rx="8" fill="#1e293b" stroke="#f97316" stroke-width="2"/>
+  <text x="650" y="155" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">Privy Auth Service</text>
+  <text x="650" y="175" text-anchor="middle" fill="#94a3b8" font-size="11">Embedded Wallets</text>
+  <text x="650" y="195" text-anchor="middle" fill="#fb923c" font-size="10">JWT Verification</text>
+
+  <rect x="760" y="130" width="180" height="90" rx="8" fill="#1e293b" stroke="#f97316" stroke-width="2"/>
+  <text x="850" y="155" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">Circle CCTP Iris API</text>
+  <text x="850" y="175" text-anchor="middle" fill="#94a3b8" font-size="11">Attestation Service</text>
+  <text x="850" y="195" text-anchor="middle" fill="#fb923c" font-size="10">Burn Proof Signatures</text>
+
+  <rect x="560" y="235" width="380" height="80" rx="8" fill="#0f172a" stroke="#fdba74" stroke-width="1" stroke-dasharray="4"/>
+  <text x="750" y="260" text-anchor="middle" fill="#fed7aa" font-size="12" font-weight="bold">RPC Provider Infrastructure</text>
+  <text x="750" y="280" text-anchor="middle" fill="#cbd5e1" font-size="11">Arc Testnet RPC | Sepolia RPC | Multi-Chain EVM Nodes</text>
+
+  <!-- BACKEND LAYER (GREEN) -->
+  <rect x="40" y="390" width="420" height="270" rx="12" fill="url(#greenGrad)" filter="url(#shadow)" opacity="0.9"/>
+  <text x="60" y="420" fill="#6ee7b7" font-size="14" font-weight="bold" letter-spacing="1">BACKEND LAYER (NESTJS SERVER)</text>
+
+  <rect x="60" y="440" width="180" height="85" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+  <text x="150" y="465" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">ArcWatcherService</text>
+  <text x="150" y="485" text-anchor="middle" fill="#94a3b8" font-size="11">ArcRpcClient (@Cron 30s)</text>
+  <text x="150" y="505" text-anchor="middle" fill="#34d399" font-size="10">Decodes Transfer Logs</text>
+
+  <rect x="255" y="440" width="185" height="85" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+  <text x="347" y="465" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">EnsService</text>
+  <text x="347" y="485" text-anchor="middle" fill="#94a3b8" font-size="11">2-Step Commit / Reveal</text>
+  <text x="347" y="505" text-anchor="middle" fill="#34d399" font-size="10">Resolver Multicalls</text>
+
+  <rect x="60" y="540" width="180" height="100" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+  <text x="150" y="565" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">Invoices &amp; Payroll</text>
+  <text x="150" y="585" text-anchor="middle" fill="#94a3b8" font-size="11">PrivyAuthGuard JWT</text>
+  <text x="150" y="605" text-anchor="middle" fill="#34d399" font-size="10">Prisma CRUD Controllers</text>
+
+  <rect x="255" y="540" width="185" height="100" rx="8" fill="#0f172a" stroke="#6ee7b7" stroke-width="1"/>
+  <text x="347" y="570" text-anchor="middle" fill="#a7f3d0" font-size="13" font-weight="bold">PostgreSQL DB</text>
+  <text x="347" y="590" text-anchor="middle" fill="#cbd5e1" font-size="11">Prisma ORM Models</text>
+  <text x="347" y="610" text-anchor="middle" fill="#94a3b8" font-size="10">Invoices, Payroll, ENS</text>
+
+  <!-- BLOCKCHAIN LAYER (PURPLE) -->
+  <rect x="540" y="390" width="420" height="270" rx="12" fill="url(#purpleGrad)" filter="url(#shadow)" opacity="0.9"/>
+  <text x="560" y="420" fill="#c084fc" font-size="14" font-weight="bold" letter-spacing="1">BLOCKCHAIN LAYER (ONCHAIN LAYERS)</text>
+
+  <rect x="560" y="440" width="180" height="100" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="2"/>
+  <text x="650" y="465" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">Arc Testnet (5042002)</text>
+  <text x="650" y="485" text-anchor="middle" fill="#94a3b8" font-size="11">Primary Treasury Layer</text>
+  <text x="650" y="505" text-anchor="middle" fill="#e9d5ff" font-size="10">ERC-20 USDC Settlement</text>
+  <text x="650" y="525" text-anchor="middle" fill="#c084fc" font-size="10">Low-Fee Batch Payroll</text>
+
+  <rect x="760" y="440" width="180" height="100" rx="8" fill="#1e293b" stroke="#a855f7" stroke-width="2"/>
+  <text x="850" y="465" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">ENSv2 (Sepolia)</text>
+  <text x="850" y="485" text-anchor="middle" fill="#94a3b8" font-size="11">verifiableFactory Proxy</text>
+  <text x="850" y="505" text-anchor="middle" fill="#e9d5ff" font-size="10">ethRegistrar Commit/Reveal</text>
+  <text x="850" y="525" text-anchor="middle" fill="#c084fc" font-size="10">publicResolver Multicall</text>
+
+  <rect x="560" y="555" width="380" height="85" rx="8" fill="#0f172a" stroke="#c084fc" stroke-width="1" stroke-dasharray="4"/>
+  <text x="750" y="580" text-anchor="middle" fill="#e9d5ff" font-size="12" font-weight="bold">Cross-Chain EVM &amp; Non-EVM Origin Chains</text>
+  <text x="750" y="600" text-anchor="middle" fill="#cbd5e1" font-size="11">Circle CCTPv2 TokenMessenger &amp; MessageTransmitter Protocol</text>
+  <text x="750" y="618" text-anchor="middle" fill="#94a3b8" font-size="10">Base | Arbitrum | Optimism | Polygon | Avalanche | Solana | Sui</text>
+
+  <!-- CONNECTORS / ARROWS -->
+  <line x1="440" y1="175" x2="560" y2="175" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="250" y1="340" x2="250" y2="390" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="460" y1="460" x2="560" y2="200" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>
+  <line x1="240" y1="480" x2="560" y2="480" stroke="#10b981" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="350" y1="340" x2="560" y2="590" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow)"/>
+</svg>
