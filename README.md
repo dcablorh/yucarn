@@ -13,6 +13,12 @@
 
 ---
 
+## 📐 System Architecture Overview
+
+![Yucarn System Architecture Diagram](docs/images/system_architecture.svg)
+
+---
+
 ## 📚 Hackathon Submission & Technical Documentation
 
 - 🏆 **[Hackathon Submission Package & Track Requirements (`docs/HACKATHON_SUBMISSION.md`)](docs/HACKATHON_SUBMISSION.md)**
