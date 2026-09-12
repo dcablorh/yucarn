@@ -24,6 +24,7 @@ Yucarn eliminates the friction of Web3 cross-chain transactions by providing a u
 | **`client/`** | Yucarn Client SPA Payment Portal | React 18, Vite 6, TypeScript, TailwindCSS, Viem/Wagmi, Reown AppKit, Circle Bridge Kit | `5173` | `80` (Nginx) / Netlify |
 | **`server/`** | Backend API & Relayer Service | NestJS, Prisma ORM, PostgreSQL, Ethers.js | `3001` | `3001` |
 | **`business/`** | Merchant Dashboard | Next.js 14, TailwindCSS, Privy Auth | `3000` | `3000` |
+| **`landingpage/`** | Yucarn Marketing Landing Page | TanStack Start (SSR), React 19, Vite 8, TailwindCSS 4, Bun | `3000` | `3000` (Bun) |
 
 ---
 
@@ -46,6 +47,8 @@ cp .env.example .env
 ```
 
 Ensure the core variables are configured:
+- `POSTGRES_USER`, `POSTGRES_PASSWORD` (required), `POSTGRES_DB`: the only database settings for Docker. There is no `DATABASE_URL`: the server builds it from these, and the `postgres` service re-applies them to its volume on every boot, so rotating the password is just changing it and redeploying.
+- `VITE_CLIENT_URL` & `VITE_BUSINESS_URL`: public URLs the landing page links to (build-time)
 - `ENCRYPTION_MASTER_KEY`: 32-byte base64 key (`openssl rand -base64 32`)
 - `PRIVY_APP_ID` & `PRIVY_APP_SECRET`: Privy merchant authentication credentials
 - `VITE_PROJECT_ID` / `VITE_REOWN_PROJECT_ID`: Reown AppKit Project ID ([cloud.reown.com](https://cloud.reown.com))
@@ -66,6 +69,7 @@ Access services at:
 - **Client SPA**: `http://localhost:5173` (dev) / `http://localhost:8080` (prod container)
 - **Business Dashboard**: `http://localhost:3000`
 - **Server API**: `http://localhost:3001`
+- **Landing Page**: `http://localhost:3002` (prod container)
 
 ---
 
