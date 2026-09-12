@@ -9,5 +9,3 @@ dist/
 # Local Netlify folders
 .netlify/
 **/.netlify/
-
-generate_history.py
